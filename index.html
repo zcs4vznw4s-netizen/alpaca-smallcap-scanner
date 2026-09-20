@@ -7,6 +7,30 @@
 </head>
 <body>
   <h1>急騰株監視ツール</h1>
-  <p>起動成功！</p>
+
+  <button onclick="getStock()">AAPLを確認</button>
+
+  <pre id="result">ここに株価データが表示されます</pre>
+
+  <script>
+    const WORKER_URL = "https://alpaca-smallcap-api.crw9fz44rn.workers.dev";
+
+    async function getStock() {
+      const result = document.getElementById("result");
+      result.textContent = "取得中...";
+
+      try {
+        const response = await fetch(
+          WORKER_URL + "?symbol=AAPL"
+        );
+
+        const data = await response.json();
+
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = "エラー: " + error;
+      }
+    }
+  </script>
 </body>
 </html>
