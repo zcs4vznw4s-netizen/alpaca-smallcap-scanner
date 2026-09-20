@@ -1,36 +1,630 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>急騰株監視ツール</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>急騰株監視ツール</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0b0f14;
+  color: #f5f7fa;
+}
+
+header {
+  padding: 18px 14px 12px;
+  background: #111821;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #26303b;
+}
+
+h1 {
+  font-size: 21px;
+  margin: 0 0 5px;
+}
+
+.status {
+  font-size: 12px;
+  color: #9aa7b5;
+}
+
+.controls {
+  padding: 12px 14px;
+  display: flex;
+  gap: 8px;
+  position: sticky;
+  top: 78px;
+  z-index: 9;
+  background: #0b0f14;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  background: #2563eb;
+  color: white;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+#message {
+  padding: 0 14px 10px;
+  font-size: 13px;
+  color: #9aa7b5;
+}
+
+.card {
+  margin: 10px 12px;
+  padding: 14px;
+  background: #121923;
+  border: 1px solid #26303b;
+  border-radius: 14px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.symbol {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.change {
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.action {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.entry {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+.support {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+.hold {
+  background: #3f3212;
+  color: #fcd34d;
+}
+
+.profit {
+  background: #4a2510;
+  color: #fdba74;
+}
+
+.exit {
+  background: #4c1010;
+  color: #fca5a5;
+}
+
+.watch {
+  background: #252b33;
+  color: #cbd5e1;
+}
+
+.score {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.score strong {
+  font-size: 21px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.metric {
+  background: #0d141d;
+  padding: 9px;
+  border-radius: 9px;
+}
+
+.label {
+  color: #7f8b99;
+  font-size: 10px;
+  margin-bottom: 3px;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.good {
+  color: #6ee7b7;
+}
+
+.bad {
+  color: #fca5a5;
+}
+
+.levels {
+  margin-top: 12px;
+  border-top: 1px solid #26303b;
+  padding-top: 11px;
+}
+
+.level {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 13px;
+}
+
+.level span:first-child {
+  color: #8d99a7;
+}
+
+.setup {
+  margin-top: 11px;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.news {
+  margin-top: 12px;
+  border-top: 1px solid #26303b;
+  padding-top: 10px;
+}
+
+.news-title {
+  font-size: 11px;
+  color: #9aa7b5;
+  margin-bottom: 5px;
+}
+
+.news a {
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.empty {
+  padding: 30px 15px;
+  text-align: center;
+  color: #8d99a7;
+}
+
+.error {
+  margin: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #3b1111;
+  color: #fca5a5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (min-width: 700px) {
+  #results {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    margin: 8px;
+  }
+}
+</style>
 </head>
+
 <body>
-  <h1>急騰株監視ツール</h1>
 
-  <button onclick="getStock()">AAPLを確認</button>
+<header>
+  <h1>🚀 急騰株監視ツール</h1>
+  <div class="status">
+    Alpaca IEX / Movers + VWAP + RSI + 20MA + 支持抵抗線
+  </div>
+</header>
 
-  <pre id="result">ここに株価データが表示されます</pre>
+<div class="controls">
+  <button onclick="loadMovers()">🔄 更新</button>
+</div>
 
-  <script>
-    const WORKER_URL = "https://alpaca-smallcap-api.crw9fz44rn.workers.dev";
+<div id="message">読み込み中...</div>
+<div id="results"></div>
 
-    async function getStock() {
-      const result = document.getElementById("result");
-      result.textContent = "取得中...";
+<script>
 
-      try {
-        const response = await fetch(
-          WORKER_URL + "?symbol=AAPL"
-        );
+const WORKER_URL =
+  "https://alpaca-smallcap-api-v2.crw9fz44rn.workers.dev";
 
-        const data = await response.json();
+function num(value, digits = 2) {
+  if (value === null || value === undefined || value === "" || value === 0) {
+    return "-";
+  }
 
-        result.textContent = JSON.stringify(data, null, 2);
-      } catch (error) {
-        result.textContent = "エラー: " + error;
+  const n = Number(value);
+
+  if (!Number.isFinite(n)) {
+    return "-";
+  }
+
+  return n.toFixed(digits);
+}
+
+function percent(value) {
+  if (value === null || value === undefined) return "-";
+
+  const n = Number(value);
+
+  if (!Number.isFinite(n)) return "-";
+
+  return (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
+}
+
+function actionClass(action) {
+  if (action === "ENTRY WATCH") return "entry";
+  if (action === "SUPPORT WATCH") return "support";
+  if (action === "HOLD") return "hold";
+  if (action === "TAKE PROFIT WATCH") return "profit";
+  if (action === "EXIT WATCH") return "exit";
+  return "watch";
+}
+
+function boolText(value) {
+  return value ? "YES" : "NO";
+}
+
+function boolClass(value) {
+  return value ? "good" : "";
+}
+
+function renderCard(c) {
+
+  const news =
+    c.latestNews &&
+    c.latestNews.length > 0
+      ? c.latestNews[0]
+      : null;
+
+  return `
+    <div class="card">
+
+      <div class="top">
+
+        <div>
+          <div class="symbol">${c.symbol}</div>
+
+          <div class="price">
+            $${num(c.price, 4)}
+          </div>
+
+          <div class="change ${c.changePercent >= 0 ? "good" : "bad"}">
+            ${percent(c.changePercent)}
+          </div>
+        </div>
+
+        <div>
+          <div class="action ${actionClass(c.action)}">
+            ${c.action || "WATCH"}
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="score">
+        SCORE:
+        <strong>${num(c.score, 0)}</strong>
+       　
+        Entry:
+        <strong>${num(c.entryScore, 0)}</strong>
+      </div>
+
+
+      <div class="grid">
+
+        <div class="metric">
+          <div class="label">出来高</div>
+          <div class="value">
+            ${num(c.volume, 0)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">出来高倍率</div>
+          <div class="value">
+            ${num(c.volumeRatio)}x
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">VWAP</div>
+          <div class="value">
+            $${num(c.vwap, 4)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">RSI</div>
+          <div class="value">
+            ${num(c.rsi)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">20MA</div>
+          <div class="value">
+            $${num(c.ma20, 4)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">20MA上昇</div>
+          <div class="value ${boolClass(c.ma20Rising)}">
+            ${boolText(c.ma20Rising)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">5分Momentum</div>
+          <div class="value">
+            ${num(c.momentum5)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">10分Momentum</div>
+          <div class="value">
+            ${num(c.momentum10)}
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="levels">
+
+        <div class="level">
+          <span>支持線</span>
+          <strong>
+            ${c.support > 0 ? "$" + num(c.support, 4) : "-"}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>抵抗線</span>
+          <strong>
+            ${c.resistance > 0 ? "$" + num(c.resistance, 4) : "-"}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>直近高値</span>
+          <strong>
+            $${num(c.recentHigh, 4)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>VWAPより上</span>
+          <strong class="${boolClass(c.aboveVWAP)}">
+            ${boolText(c.aboveVWAP)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>20MAより上</span>
+          <strong class="${boolClass(c.aboveMA20)}">
+            ${boolText(c.aboveMA20)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>抵抗線突破</span>
+          <strong class="${boolClass(c.breakout)}">
+            ${boolText(c.breakout)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>Breakout強度</span>
+          <strong>
+            ${num(c.breakoutStrength)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>Retest</span>
+          <strong class="${boolClass(c.retest)}">
+            ${boolText(c.retest)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>Fake Breakout</span>
+          <strong class="${c.fakeBreakout ? "bad" : ""}">
+            ${boolText(c.fakeBreakout)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>支持線タッチ</span>
+          <strong>
+            ${num(c.supportTouches, 0)}回
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>抵抗線タッチ</span>
+          <strong>
+            ${num(c.resistanceTouches, 0)}回
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="levels">
+
+        <div class="level">
+          <span>🎯 Target 1</span>
+          <strong>
+            $${num(c.targets?.target1, 4)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>🎯 Target 2</span>
+          <strong>
+            $${num(c.targets?.target2, 4)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>🎯 Target 3</span>
+          <strong>
+            $${num(c.targets?.target3, 4)}
+          </strong>
+        </div>
+
+        <div class="level">
+          <span>🛑 Stop候補</span>
+          <strong>
+            $${num(c.stop, 4)}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="setup">
+        Setup:
+        <strong>${c.setup || "NONE"}</strong>
+      </div>
+
+
+      ${
+        news
+        ? `
+          <div class="news">
+            <div class="news-title">
+              📰 最新材料
+            </div>
+
+            <a href="${news.url || "#"}"
+               target="_blank"
+               rel="noopener">
+              ${news.headline || "ニュースを見る"}
+            </a>
+          </div>
+        `
+        : ""
       }
+
+    </div>
+  `;
+}
+
+
+async function loadMovers() {
+
+  const message =
+    document.getElementById("message");
+
+  const results =
+    document.getElementById("results");
+
+  message.textContent =
+    "🔄 最新データを取得中...";
+
+  results.innerHTML = "";
+
+  try {
+
+    const response =
+      await fetch(WORKER_URL + "/movers");
+
+    if (!response.ok) {
+
+      const text =
+        await response.text();
+
+      throw new Error(
+        "HTTP " +
+        response.status +
+        "\n" +
+        text
+      );
     }
-  </script>
+
+    const data =
+      await response.json();
+
+    if (!data.candidates) {
+
+      throw new Error(
+        "candidates が見つかりません"
+      );
+    }
+
+    message.innerHTML =
+      `更新: ${new Date(data.updatedAt).toLocaleString("ja-JP")}
+      　/ ${data.dataFeed || "IEX"}
+      　/ ${data.total}銘柄`;
+
+    results.innerHTML =
+      data.candidates
+        .map(renderCard)
+        .join("");
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "データ取得に失敗しました";
+
+    results.innerHTML =
+      `<div class="error">
+        ${error.message}
+      </div>`;
+  }
+}
+
+loadMovers();
+
+</script>
+
 </body>
 </html>
