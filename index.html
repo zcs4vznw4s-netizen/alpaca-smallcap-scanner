@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>急騰株監視ツール</title>
+<title>急騰株監視AI</title>
 
 <style>
 * {
@@ -12,175 +12,213 @@
 
 body {
   margin: 0;
+  background: #080c12;
+  color: #f4f7fb;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #0b0f14;
-  color: #f5f7fa;
 }
 
 header {
-  padding: 18px 14px 12px;
-  background: #111821;
   position: sticky;
   top: 0;
-  z-index: 10;
-  border-bottom: 1px solid #26303b;
+  z-index: 100;
+  padding: 14px;
+  background: rgba(8,12,18,.96);
+  border-bottom: 1px solid #27303b;
+  backdrop-filter: blur(10px);
 }
 
 h1 {
-  font-size: 21px;
-  margin: 0 0 5px;
+  margin: 0;
+  font-size: 20px;
 }
 
-.status {
-  font-size: 12px;
-  color: #9aa7b5;
+.sub {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #8491a0;
 }
 
 .controls {
-  padding: 12px 14px;
+  padding: 10px 12px;
   display: flex;
   gap: 8px;
+  background: #080c12;
   position: sticky;
-  top: 78px;
-  z-index: 9;
-  background: #0b0f14;
+  top: 67px;
+  z-index: 90;
 }
 
 button {
   border: 0;
   border-radius: 10px;
-  padding: 12px 16px;
-  font-size: 15px;
-  font-weight: 700;
-  background: #2563eb;
+  padding: 11px 14px;
+  font-weight: 800;
   color: white;
+  background: #2563eb;
 }
 
-button:active {
-  transform: scale(.98);
+button.secondary {
+  background: #252d38;
 }
 
-#message {
-  padding: 0 14px 10px;
+#status {
+  padding: 5px 14px 10px;
+  color: #8b98a8;
+  font-size: 12px;
+}
+
+.section {
+  margin: 12px;
+}
+
+.sectionTitle {
   font-size: 13px;
-  color: #9aa7b5;
+  font-weight: 800;
+  margin: 16px 2px 8px;
+  color: #aeb9c7;
 }
 
 .card {
-  margin: 10px 12px;
+  background: #111821;
+  border: 1px solid #27313d;
+  border-radius: 15px;
   padding: 14px;
-  background: #121923;
-  border: 1px solid #26303b;
-  border-radius: 14px;
+  margin-bottom: 10px;
+}
+
+.owned {
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 18px rgba(59,130,246,.15);
 }
 
 .top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .symbol {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 24px;
+  font-weight: 900;
 }
 
 .price {
-  font-size: 18px;
-  font-weight: 700;
+  margin-top: 2px;
+  font-size: 19px;
+  font-weight: 800;
 }
 
 .change {
-  font-size: 15px;
-  font-weight: 700;
   margin-top: 3px;
+  font-weight: 800;
 }
 
-.action {
+.green {
+  color: #4ade80;
+}
+
+.red {
+  color: #fb7185;
+}
+
+.yellow {
+  color: #facc15;
+}
+
+.blue {
+  color: #60a5fa;
+}
+
+.purple {
+  color: #c084fc;
+}
+
+.signal {
   display: inline-block;
-  padding: 6px 9px;
-  border-radius: 8px;
+  padding: 7px 9px;
+  border-radius: 9px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 900;
   white-space: nowrap;
 }
 
-.entry {
+.signal-entry {
   background: #064e3b;
   color: #6ee7b7;
 }
 
-.support {
-  background: #1e3a5f;
+.signal-breakout {
+  background: #172554;
   color: #93c5fd;
 }
 
-.hold {
-  background: #3f3212;
-  color: #fcd34d;
+.signal-retest {
+  background: #3b0764;
+  color: #d8b4fe;
 }
 
-.profit {
-  background: #4a2510;
+.signal-hold {
+  background: #3f3212;
+  color: #fde68a;
+}
+
+.signal-profit {
+  background: #431407;
   color: #fdba74;
 }
 
-.exit {
-  background: #4c1010;
+.signal-exit {
+  background: #450a0a;
   color: #fca5a5;
 }
 
-.watch {
-  background: #252b33;
-  color: #cbd5e1;
+.summary {
+  margin-top: 13px;
+  padding: 12px;
+  background: #0b1119;
+  border-radius: 11px;
 }
 
-.score {
-  margin-top: 12px;
-  font-size: 14px;
+.summaryTitle {
+  font-size: 11px;
+  color: #8c99a8;
 }
 
-.score strong {
-  font-size: 21px;
+.summaryMain {
+  margin-top: 3px;
+  font-size: 18px;
+  font-weight: 900;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 7px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .metric {
-  background: #0d141d;
   padding: 9px;
   border-radius: 9px;
+  background: #0b1119;
 }
 
 .label {
-  color: #7f8b99;
   font-size: 10px;
-  margin-bottom: 3px;
+  color: #778494;
 }
 
 .value {
+  margin-top: 2px;
   font-size: 14px;
-  font-weight: 700;
-}
-
-.good {
-  color: #6ee7b7;
-}
-
-.bad {
-  color: #fca5a5;
+  font-weight: 800;
 }
 
 .levels {
   margin-top: 12px;
-  border-top: 1px solid #26303b;
-  padding-top: 11px;
+  border-top: 1px solid #27313d;
+  padding-top: 9px;
 }
 
 .level {
@@ -190,59 +228,78 @@ button:active {
   font-size: 13px;
 }
 
-.level span:first-child {
-  color: #8d99a7;
+.level span {
+  color: #8b98a8;
 }
 
-.setup {
-  margin-top: 11px;
+.reason {
+  margin-top: 10px;
   font-size: 12px;
-  color: #cbd5e1;
+  color: #b8c3cf;
+  line-height: 1.55;
+}
+
+.positionBox {
+  margin-top: 12px;
+  padding: 11px;
+  background: #0d1622;
+  border-radius: 10px;
+}
+
+input {
+  width: 100%;
+  margin-top: 7px;
+  padding: 10px;
+  border: 1px solid #344150;
+  border-radius: 8px;
+  background: #080c12;
+  color: white;
+  font-size: 16px;
+}
+
+.positionButtons {
+  display: flex;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.positionButtons button {
+  flex: 1;
+  padding: 9px;
 }
 
 .news {
-  margin-top: 12px;
-  border-top: 1px solid #26303b;
+  margin-top: 11px;
   padding-top: 10px;
-}
-
-.news-title {
-  font-size: 11px;
-  color: #9aa7b5;
-  margin-bottom: 5px;
+  border-top: 1px solid #27313d;
+  font-size: 12px;
 }
 
 .news a {
   color: #93c5fd;
   text-decoration: none;
-  font-size: 12px;
 }
 
 .empty {
-  padding: 30px 15px;
+  padding: 28px 14px;
   text-align: center;
-  color: #8d99a7;
+  color: #7e8b99;
 }
 
-.error {
-  margin: 14px;
+.alert {
+  margin: 10px 12px;
   padding: 14px;
-  border-radius: 10px;
-  background: #3b1111;
-  color: #fca5a5;
-  white-space: pre-wrap;
-  word-break: break-word;
+  border-radius: 12px;
+  background: #172554;
+  border: 1px solid #2563eb;
 }
 
-@media (min-width: 700px) {
-  #results {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
+.alert strong {
+  font-size: 16px;
+}
 
-  .card {
-    margin: 8px;
-  }
+.hidden {
+  display: none;
 }
 </style>
 </head>
@@ -250,163 +307,588 @@ button:active {
 <body>
 
 <header>
-  <h1>🚀 急騰株監視ツール</h1>
-  <div class="status">
-    Alpaca IEX / Movers + VWAP + RSI + 20MA + 支持抵抗線
+  <h1>🚨 急騰株監視AI</h1>
+  <div class="sub">
+    ENTRY / BREAKOUT / RETEST / HOLD / TAKE PROFIT / EXIT
   </div>
 </header>
 
 <div class="controls">
-  <button onclick="loadMovers()">🔄 更新</button>
+  <button onclick="loadData()">🔄 更新</button>
+  <button class="secondary" onclick="clearPositions()">保有解除</button>
 </div>
 
-<div id="message">読み込み中...</div>
-<div id="results"></div>
+<div id="status">読み込み中...</div>
+
+<div id="alertArea"></div>
+
+<div id="ownedArea"></div>
+
+<div class="section">
+  <div id="signalTitle" class="sectionTitle"></div>
+  <div id="signals"></div>
+</div>
 
 <script>
 
 const WORKER_URL =
   "https://alpaca-smallcap-api-v2.crw9fz44rn.workers.dev";
 
-function num(value, digits = 2) {
-  if (value === null || value === undefined || value === "" || value === 0) {
+const REFRESH_MS = 15000;
+
+let latestCandidates = [];
+let previousStates = {};
+
+function money(v) {
+  if (v === undefined || v === null || !Number.isFinite(Number(v))) {
     return "-";
   }
 
-  const n = Number(value);
-
-  if (!Number.isFinite(n)) {
-    return "-";
-  }
-
-  return n.toFixed(digits);
+  return "$" + Number(v).toFixed(4);
 }
 
-function percent(value) {
-  if (value === null || value === undefined) return "-";
+function pct(v) {
+  if (v === undefined || v === null || !Number.isFinite(Number(v))) {
+    return "-";
+  }
 
-  const n = Number(value);
-
-  if (!Number.isFinite(n)) return "-";
+  const n = Number(v);
 
   return (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
 }
 
-function actionClass(action) {
-  if (action === "ENTRY WATCH") return "entry";
-  if (action === "SUPPORT WATCH") return "support";
-  if (action === "HOLD") return "hold";
-  if (action === "TAKE PROFIT WATCH") return "profit";
-  if (action === "EXIT WATCH") return "exit";
-  return "watch";
+function escapeHtml(str) {
+  if (str === undefined || str === null) return "";
+
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-function boolText(value) {
-  return value ? "YES" : "NO";
+
+/*
+  現在のWorkerデータから
+  「行動優位度」を算出する。
+
+  これは未来の確率ではない。
+  現在確認できる条件を0～100に圧縮したもの。
+*/
+
+function advantage(c) {
+
+  let score = 50;
+
+  if (c.aboveVWAP) score += 12;
+  else score -= 12;
+
+  if (c.aboveMA20) score += 8;
+  else score -= 8;
+
+  if (c.breakout) score += 12;
+
+  if (c.retest) score += 8;
+
+  if (c.fakeBreakout) score -= 25;
+
+  if (Number(c.volumeRatio) >= 2) score += 7;
+
+  if (Number(c.volumeRatio) >= 5) score += 5;
+
+  if (Number(c.momentum5) > 0) score += 5;
+  else score -= 5;
+
+  if (Number(c.momentum10) > 0) score += 5;
+  else score -= 5;
+
+  if (Number(c.rsi) >= 80) score -= 8;
+
+  if (Number(c.rsi) >= 70 && Number(c.rsi) < 80) {
+    score -= 2;
+  }
+
+  if (
+    c.resistance > 0 &&
+    Number(c.price) > Number(c.resistance)
+  ) {
+    score += 8;
+  }
+
+  if (
+    c.support > 0 &&
+    Number(c.price) < Number(c.support)
+  ) {
+    score -= 20;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
 }
 
-function boolClass(value) {
-  return value ? "good" : "";
+
+function getPosition(symbol) {
+
+  try {
+
+    const raw =
+      localStorage.getItem("position_" + symbol);
+
+    if (!raw) return null;
+
+    return JSON.parse(raw);
+
+  } catch {
+
+    return null;
+
+  }
 }
 
-function renderCard(c) {
+
+function setPosition(symbol, price, qty) {
+
+  localStorage.setItem(
+    "position_" + symbol,
+    JSON.stringify({
+      entryPrice: Number(price),
+      quantity: Number(qty || 0)
+    })
+  );
+
+}
+
+
+function removePosition(symbol) {
+
+  localStorage.removeItem(
+    "position_" + symbol
+  );
+
+}
+
+
+function clearPositions() {
+
+  const keys = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+
+    const key = localStorage.key(i);
+
+    if (key && key.startsWith("position_")) {
+      keys.push(key);
+    }
+
+  }
+
+  keys.forEach(k => localStorage.removeItem(k));
+
+  render(latestCandidates);
+
+}
+
+
+function signalClass(signal) {
+
+  if (signal === "ENTRY") return "signal-entry";
+  if (signal === "BREAKOUT") return "signal-breakout";
+  if (signal === "RETEST ENTRY") return "signal-retest";
+  if (signal === "HOLD") return "signal-hold";
+  if (signal === "TAKE PROFIT") return "signal-profit";
+  if (signal === "EXIT") return "signal-exit";
+
+  return "signal-hold";
+
+}
+
+
+function determineEntrySignal(c) {
+
+  const adv = advantage(c);
+
+  if (c.fakeBreakout) {
+    return null;
+  }
+
+  if (
+    c.breakout &&
+    c.retest &&
+    c.aboveVWAP &&
+    c.aboveMA20 &&
+    adv >= 65
+  ) {
+    return "RETEST ENTRY";
+  }
+
+  if (
+    c.breakout &&
+    c.aboveVWAP &&
+    c.aboveMA20 &&
+    Number(c.volumeRatio) >= 1.5 &&
+    adv >= 65
+  ) {
+    return "BREAKOUT";
+  }
+
+  if (
+    c.aboveVWAP &&
+    c.aboveMA20 &&
+    Number(c.momentum5) > 0 &&
+    Number(c.momentum10) > 0 &&
+    adv >= 70
+  ) {
+    return "ENTRY";
+  }
+
+  return null;
+}
+
+
+function determinePositionSignal(c, p) {
+
+  if (!p) return null;
+
+  const price = Number(c.price);
+  const entry = Number(p.entryPrice);
+
+  if (!entry || !price) return null;
+
+  const gain =
+    ((price - entry) / entry) * 100;
+
+  const adv = advantage(c);
+
+  /*
+    明確な崩れ。
+  */
+
+  if (
+    c.fakeBreakout ||
+    (
+      c.support > 0 &&
+      price < Number(c.support)
+    ) ||
+    (
+      !c.aboveVWAP &&
+      !c.aboveMA20 &&
+      Number(c.momentum5) < 0
+    )
+  ) {
+    return "EXIT";
+  }
+
+  /*
+    大きく上昇して、過熱・抵抗接近などが
+    重なった場合。
+  */
+
+  if (
+    gain >= 5 &&
+    (
+      Number(c.rsi) >= 78 ||
+      (
+        c.resistance > 0 &&
+        price >= Number(c.resistance) * 0.99
+      ) ||
+      Number(c.momentum5) < 0
+    )
+  ) {
+    return "TAKE PROFIT";
+  }
+
+  return "HOLD";
+}
+
+
+function card(c, position) {
+
+  const adv = advantage(c);
+
+  const entrySignal =
+    determineEntrySignal(c);
+
+  const positionSignal =
+    determinePositionSignal(
+      c,
+      position
+    );
+
+  const signal =
+    positionSignal ||
+    entrySignal;
+
+  if (!signal) return "";
+
+  const price = Number(c.price);
+
+  let gain = null;
+  let pnl = null;
+
+  if (position) {
+
+    gain =
+      ((price - position.entryPrice) /
+      position.entryPrice) * 100;
+
+    if (
+      position.quantity &&
+      Number.isFinite(position.quantity)
+    ) {
+
+      pnl =
+        (price - position.entryPrice) *
+        position.quantity;
+
+    }
+
+  }
+
+  let currentStop =
+    Number(c.stop) || Number(c.support) || Number(c.vwap);
+
+  /*
+    利益が乗った場合は撤退ラインを
+    買値より下に固定しない。
+  */
+
+  if (position && gain > 2) {
+
+    const trailing =
+      price * 0.97;
+
+    if (trailing > currentStop) {
+      currentStop = trailing;
+    }
+
+  }
+
+  let actionText = "";
+
+  if (signal === "ENTRY") {
+    actionText = "🟢 今はエントリー候補";
+  }
+
+  if (signal === "BREAKOUT") {
+    actionText = "🚨 今ブレイク";
+  }
+
+  if (signal === "RETEST ENTRY") {
+    actionText = "🔵 リテスト成功";
+  }
+
+  if (signal === "HOLD") {
+    actionText = "🟢 保有継続";
+  }
+
+  if (signal === "TAKE PROFIT") {
+    actionText = "🟠 利確を検討";
+  }
+
+  if (signal === "EXIT") {
+    actionText = "🔴 撤退警戒";
+  }
+
+  const target1 =
+    c.targets?.target1;
+
+  const target2 =
+    c.targets?.target2;
+
+  const target3 =
+    c.targets?.target3;
 
   const news =
     c.latestNews &&
-    c.latestNews.length > 0
+    c.latestNews.length
       ? c.latestNews[0]
       : null;
 
   return `
-    <div class="card">
+    <div class="card ${position ? "owned" : ""}">
 
       <div class="top">
 
         <div>
-          <div class="symbol">${c.symbol}</div>
+
+          <div class="symbol">
+            ${escapeHtml(c.symbol)}
+          </div>
 
           <div class="price">
-            $${num(c.price, 4)}
+            ${money(price)}
           </div>
 
-          <div class="change ${c.changePercent >= 0 ? "good" : "bad"}">
-            ${percent(c.changePercent)}
+          <div class="change ${
+            Number(c.changePercent) >= 0
+              ? "green"
+              : "red"
+          }">
+            ${pct(c.changePercent)}
           </div>
+
         </div>
 
-        <div>
-          <div class="action ${actionClass(c.action)}">
-            ${c.action || "WATCH"}
-          </div>
+        <div class="signal ${signalClass(signal)}">
+          ${signal}
         </div>
 
       </div>
 
 
-      <div class="score">
-        SCORE:
-        <strong>${num(c.score, 0)}</strong>
-       　
-        Entry:
-        <strong>${num(c.entryScore, 0)}</strong>
+      <div class="summary">
+
+        <div class="summaryTitle">
+          今どうなのか
+        </div>
+
+        <div class="summaryMain">
+          ${actionText}
+        </div>
+
+        <div style="margin-top:6px;font-size:12px;">
+          上昇優位度
+          <strong class="${
+            adv >= 70
+              ? "green"
+              : adv >= 50
+              ? "yellow"
+              : "red"
+          }">
+            ${adv}/100
+          </strong>
+        </div>
+
       </div>
+
+
+      ${
+        position
+        ? `
+          <div class="positionBox">
+
+            <div class="label">
+              保有中
+            </div>
+
+            <div class="grid">
+
+              <div class="metric">
+                <div class="label">
+                  買値
+                </div>
+                <div class="value">
+                  ${money(position.entryPrice)}
+                </div>
+              </div>
+
+              <div class="metric">
+                <div class="label">
+                  含み損益
+                </div>
+                <div class="value ${
+                  gain >= 0 ? "green" : "red"
+                }">
+                  ${pct(gain)}
+                </div>
+              </div>
+
+              ${
+                pnl !== null
+                ? `
+                  <div class="metric">
+                    <div class="label">
+                      含み損益額
+                    </div>
+                    <div class="value ${
+                      pnl >= 0 ? "green" : "red"
+                    }">
+                      ${pnl >= 0 ? "+" : ""}
+                      $${pnl.toFixed(2)}
+                    </div>
+                  </div>
+                `
+                : ""
+              }
+
+              <div class="metric">
+                <div class="label">
+                  現在撤退ライン
+                </div>
+                <div class="value red">
+                  ${money(currentStop)}
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        `
+        : `
+          <div class="positionBox">
+
+            <div class="label">
+              この銘柄を保有した場合
+            </div>
+
+            <input
+              id="entry_${escapeHtml(c.symbol)}"
+              type="number"
+              step="0.0001"
+              placeholder="買値を入力"
+            >
+
+            <div class="positionButtons">
+
+              <button
+                onclick="enterPosition(
+                  '${escapeHtml(c.symbol)}'
+                )">
+                保有開始
+              </button>
+
+            </div>
+
+          </div>
+        `
+      }
 
 
       <div class="grid">
 
         <div class="metric">
-          <div class="label">出来高</div>
-          <div class="value">
-            ${num(c.volume, 0)}
+          <div class="label">
+            支持線
+          </div>
+          <div class="value blue">
+            ${money(c.support)}
           </div>
         </div>
 
         <div class="metric">
-          <div class="label">出来高倍率</div>
-          <div class="value">
-            ${num(c.volumeRatio)}x
+          <div class="label">
+            抵抗線
+          </div>
+          <div class="value yellow">
+            ${money(c.resistance)}
           </div>
         </div>
 
         <div class="metric">
-          <div class="label">VWAP</div>
+          <div class="label">
+            VWAP
+          </div>
           <div class="value">
-            $${num(c.vwap, 4)}
+            ${money(c.vwap)}
           </div>
         </div>
 
         <div class="metric">
-          <div class="label">RSI</div>
-          <div class="value">
-            ${num(c.rsi)}
+          <div class="label">
+            20MA
           </div>
-        </div>
-
-        <div class="metric">
-          <div class="label">20MA</div>
           <div class="value">
-            $${num(c.ma20, 4)}
-          </div>
-        </div>
-
-        <div class="metric">
-          <div class="label">20MA上昇</div>
-          <div class="value ${boolClass(c.ma20Rising)}">
-            ${boolText(c.ma20Rising)}
-          </div>
-        </div>
-
-        <div class="metric">
-          <div class="label">5分Momentum</div>
-          <div class="value">
-            ${num(c.momentum5)}
-          </div>
-        </div>
-
-        <div class="metric">
-          <div class="label">10分Momentum</div>
-          <div class="value">
-            ${num(c.momentum10)}
+            ${money(c.ma20)}
           </div>
         </div>
 
@@ -415,122 +897,99 @@ function renderCard(c) {
 
       <div class="levels">
 
+        ${
+          !position
+          ? `
+            <div class="level">
+              <span>エントリー候補</span>
+              <strong>
+                ${
+                  c.resistance > 0 &&
+                  c.breakout
+                  ? money(c.price)
+                  : (
+                    c.support > 0
+                    ? money(c.support)
+                    : money(c.price)
+                  )
+                }
+              </strong>
+            </div>
+          `
+          : ""
+        }
+
         <div class="level">
-          <span>支持線</span>
-          <strong>
-            ${c.support > 0 ? "$" + num(c.support, 4) : "-"}
+          <span>損切り候補</span>
+          <strong class="red">
+            ${money(currentStop)}
           </strong>
         </div>
 
         <div class="level">
-          <span>抵抗線</span>
-          <strong>
-            ${c.resistance > 0 ? "$" + num(c.resistance, 4) : "-"}
+          <span>利確①</span>
+          <strong class="green">
+            ${money(target1)}
           </strong>
         </div>
 
         <div class="level">
-          <span>直近高値</span>
-          <strong>
-            $${num(c.recentHigh, 4)}
+          <span>利確②</span>
+          <strong class="green">
+            ${money(target2)}
           </strong>
         </div>
 
         <div class="level">
-          <span>VWAPより上</span>
-          <strong class="${boolClass(c.aboveVWAP)}">
-            ${boolText(c.aboveVWAP)}
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>20MAより上</span>
-          <strong class="${boolClass(c.aboveMA20)}">
-            ${boolText(c.aboveMA20)}
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>抵抗線突破</span>
-          <strong class="${boolClass(c.breakout)}">
-            ${boolText(c.breakout)}
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>Breakout強度</span>
-          <strong>
-            ${num(c.breakoutStrength)}
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>Retest</span>
-          <strong class="${boolClass(c.retest)}">
-            ${boolText(c.retest)}
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>Fake Breakout</span>
-          <strong class="${c.fakeBreakout ? "bad" : ""}">
-            ${boolText(c.fakeBreakout)}
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>支持線タッチ</span>
-          <strong>
-            ${num(c.supportTouches, 0)}回
-          </strong>
-        </div>
-
-        <div class="level">
-          <span>抵抗線タッチ</span>
-          <strong>
-            ${num(c.resistanceTouches, 0)}回
+          <span>利確③</span>
+          <strong class="green">
+            ${money(target3)}
           </strong>
         </div>
 
       </div>
 
 
-      <div class="levels">
+      <div class="reason">
 
-        <div class="level">
-          <span>🎯 Target 1</span>
-          <strong>
-            $${num(c.targets?.target1, 4)}
-          </strong>
-        </div>
+        ${
+          c.breakout
+          ? "✓ 抵抗線ブレイク"
+          : ""
+        }
 
-        <div class="level">
-          <span>🎯 Target 2</span>
-          <strong>
-            $${num(c.targets?.target2, 4)}
-          </strong>
-        </div>
+        ${
+          c.retest
+          ? "　✓ リテスト"
+          : ""
+        }
 
-        <div class="level">
-          <span>🎯 Target 3</span>
-          <strong>
-            $${num(c.targets?.target3, 4)}
-          </strong>
-        </div>
+        ${
+          c.aboveVWAP
+          ? "　✓ VWAP上"
+          : "　⚠ VWAP下"
+        }
 
-        <div class="level">
-          <span>🛑 Stop候補</span>
-          <strong>
-            $${num(c.stop, 4)}
-          </strong>
-        </div>
+        ${
+          c.aboveMA20
+          ? "　✓ 20MA上"
+          : "　⚠ 20MA下"
+        }
 
-      </div>
+        ${
+          Number(c.volumeRatio) >= 2
+          ? `　✓ 出来高 ${Number(c.volumeRatio).toFixed(1)}倍`
+          : ""
+        }
 
+        ${
+          c.fakeBreakout
+          ? `<br><span class="red">
+              ⚠ フェイクブレイク
+            </span>`
+          : ""
+        }
 
-      <div class="setup">
-        Setup:
-        <strong>${c.setup || "NONE"}</strong>
       </div>
 
 
@@ -538,15 +997,18 @@ function renderCard(c) {
         news
         ? `
           <div class="news">
-            <div class="news-title">
-              📰 最新材料
-            </div>
 
-            <a href="${news.url || "#"}"
-               target="_blank"
-               rel="noopener">
-              ${news.headline || "ニュースを見る"}
+            📰 材料
+
+            <br>
+
+            <a
+              href="${escapeHtml(news.url)}"
+              target="_blank"
+              rel="noopener">
+              ${escapeHtml(news.headline)}
             </a>
+
           </div>
         `
         : ""
@@ -557,35 +1019,226 @@ function renderCard(c) {
 }
 
 
-async function loadMovers() {
+function enterPosition(symbol) {
 
-  const message =
-    document.getElementById("message");
+  const input =
+    document.getElementById(
+      "entry_" + symbol
+    );
 
-  const results =
-    document.getElementById("results");
+  if (!input) return;
 
-  message.textContent =
-    "🔄 最新データを取得中...";
+  const price =
+    Number(input.value);
 
-  results.innerHTML = "";
+  if (!price || price <= 0) {
+
+    alert("買値を入力してください");
+
+    return;
+
+  }
+
+  setPosition(symbol, price, 0);
+
+  render(latestCandidates);
+
+}
+
+
+function render(candidates) {
+
+  latestCandidates = candidates;
+
+  const owned = [];
+  const signals = [];
+
+  candidates.forEach(c => {
+
+    const position =
+      getPosition(c.symbol);
+
+    if (position) {
+
+      owned.push({
+        c,
+        position
+      });
+
+    } else {
+
+      const signal =
+        determineEntrySignal(c);
+
+      if (signal) {
+
+        signals.push({
+          c,
+          signal
+        });
+
+      }
+
+    }
+
+  });
+
+
+  /*
+    保有銘柄を最上部に固定
+  */
+
+  const ownedArea =
+    document.getElementById("ownedArea");
+
+  if (owned.length) {
+
+    ownedArea.innerHTML = `
+      <div class="section">
+        <div class="sectionTitle">
+          🔴 保有中 — 最優先
+        </div>
+
+        ${owned
+          .map(x =>
+            card(x.c, x.position)
+          )
+          .join("")
+        }
+
+      </div>
+    `;
+
+  } else {
+
+    ownedArea.innerHTML = "";
+
+  }
+
+
+  const signalsArea =
+    document.getElementById("signals");
+
+  const signalTitle =
+    document.getElementById("signalTitle");
+
+
+  if (!signals.length) {
+
+    signalTitle.textContent =
+      "現在、行動条件を満たしている銘柄はありません";
+
+    signalsArea.innerHTML =
+      `<div class="empty">
+        新しいENTRY / BREAKOUT / RETESTを待機中
+      </div>`;
+
+  } else {
+
+    signalTitle.textContent =
+      "🚨 今見るべき銘柄";
+
+    signalsArea.innerHTML =
+      signals
+        .map(x => card(x.c, null))
+        .join("");
+
+  }
+
+
+  /*
+    状態変化アラート
+  */
+
+  let alertHtml = "";
+
+  signals.forEach(x => {
+
+    const old =
+      previousStates[x.c.symbol];
+
+    if (old && old !== x.signal) {
+
+      alertHtml += `
+        <div class="alert">
+          🚨
+          <strong>
+            ${escapeHtml(x.c.symbol)}
+          </strong>
+          <br>
+          ${old} → ${x.signal}
+        </div>
+      `;
+
+    }
+
+    previousStates[x.c.symbol] =
+      x.signal;
+
+  });
+
+
+  owned.forEach(x => {
+
+    const sig =
+      determinePositionSignal(
+        x.c,
+        x.position
+      );
+
+    const old =
+      previousStates[x.c.symbol];
+
+    if (old && old !== sig) {
+
+      alertHtml += `
+        <div class="alert">
+          🚨
+          <strong>
+            ${escapeHtml(x.c.symbol)}
+          </strong>
+          <br>
+          保有状態：
+          ${old} → ${sig}
+        </div>
+      `;
+
+    }
+
+    previousStates[x.c.symbol] =
+      sig;
+
+  });
+
+
+  document.getElementById(
+    "alertArea"
+  ).innerHTML = alertHtml;
+
+}
+
+
+async function loadData() {
+
+  const status =
+    document.getElementById("status");
+
+  status.textContent =
+    "🔄 最新データ取得中...";
 
   try {
 
     const response =
-      await fetch(WORKER_URL + "/movers");
+      await fetch(
+        WORKER_URL + "/movers?t=" + Date.now()
+      );
 
     if (!response.ok) {
 
-      const text =
-        await response.text();
-
       throw new Error(
-        "HTTP " +
-        response.status +
-        "\n" +
-        text
+        "HTTP " + response.status
       );
+
     }
 
     const data =
@@ -594,35 +1247,41 @@ async function loadMovers() {
     if (!data.candidates) {
 
       throw new Error(
-        "candidates が見つかりません"
+        "candidates がありません"
       );
+
     }
 
-    message.innerHTML =
-      `更新: ${new Date(data.updatedAt).toLocaleString("ja-JP")}
-      　/ ${data.dataFeed || "IEX"}
-      　/ ${data.total}銘柄`;
+    status.textContent =
+      "最終更新: " +
+      new Date(
+        data.updatedAt
+      ).toLocaleString("ja-JP") +
+      " / " +
+      data.dataFeed +
+      " / 15秒更新";
 
-    results.innerHTML =
-      data.candidates
-        .map(renderCard)
-        .join("");
+    render(data.candidates);
 
   } catch (error) {
 
-    console.error(error);
+    status.innerHTML =
+      `<span class="red">
+        データ取得エラー：
+        ${escapeHtml(error.message)}
+      </span>`;
 
-    message.textContent =
-      "データ取得に失敗しました";
-
-    results.innerHTML =
-      `<div class="error">
-        ${error.message}
-      </div>`;
   }
+
 }
 
-loadMovers();
+
+loadData();
+
+setInterval(
+  loadData,
+  REFRESH_MS
+);
 
 </script>
 
